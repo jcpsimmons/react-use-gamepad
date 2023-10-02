@@ -1,21 +1,44 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 interface useGamepadArgs {
-  onButtonDown?: (x: any) => void
-  onButtonUp?: () => void
-  onJoystickMove?: (x: any) => void
+  onButtonDown?: (buttonNumber: number) => void
+  onButtonUp?: (buttonNumber: number) => void
+  onJoystickMove?: (index: number, value: number) => void
 }
 
 export const useGamepad = ({ onButtonDown, onButtonUp, onJoystickMove }: useGamepadArgs) => {
+  const isInitialized = useRef(false)
+
   useEffect(() => {
-    !!onButtonDown && window.addEventListener('gamepadbuttondown', onButtonDown)
-    !!onButtonUp && window.addEventListener('gamepadbuttonup', onButtonUp)
-    !!onJoystickMove && window.addEventListener('joystickmove', onJoystickMove)
+    if (!isInitialized.current) {
+      !!onButtonDown &&
+        window.addEventListener('gamepadbuttondown', ({ detail: { buttonNumber } }) => {
+          onButtonDown(buttonNumber)
+        })
+      !!onButtonUp &&
+        window.addEventListener('gamepadbuttonup', ({ detail: { buttonNumber } }) => {
+          onButtonUp(buttonNumber)
+        })
+      !!onJoystickMove &&
+        window.addEventListener('joystickmove', ({ detail: { index, value } }) => {
+          onJoystickMove(index, value)
+        })
+      isInitialized.current = true
+    }
 
     return () => {
-      !!onButtonDown && window.removeEventListener('gamepadbuttondown', onButtonDown)
-      !!onButtonUp && window.removeEventListener('gamepadbuttonup', onButtonUp)
-      !!onJoystickMove && window.removeEventListener('joystickmove', onJoystickMove)
+      !!onButtonDown &&
+        window.removeEventListener('gamepadbuttondown', ({ detail: { buttonNumber } }) => {
+          onButtonDown(buttonNumber)
+        })
+      !!onButtonUp &&
+        window.removeEventListener('gamepadbuttonup', ({ detail: { buttonNumber } }) => {
+          onButtonUp(buttonNumber)
+        })
+      !!onJoystickMove &&
+        window.removeEventListener('joystickmove', ({ detail: { index, value } }) => {
+          onJoystickMove(index, value)
+        })
     }
   }, [onButtonDown, onButtonUp, onJoystickMove])
 
