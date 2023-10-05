@@ -4,10 +4,13 @@ interface useGamepadArgs {
   onButtonDown?: (buttonNumber: number) => void
   onButtonUp?: (buttonNumber: number) => void
   onJoystickMove?: (index: number, value: number) => void
+  dependencies?: any[]
 }
 
-export const useGamepad = ({ onButtonDown, onButtonUp, onJoystickMove }: useGamepadArgs) => {
+export const useGamepad = ({ onButtonDown, onButtonUp, onJoystickMove, dependencies }: useGamepadArgs) => {
   const isInitialized = useRef(false)
+
+  const deps = dependencies ? dependencies : []
 
   useEffect(() => {
     if (!isInitialized.current) {
@@ -40,7 +43,8 @@ export const useGamepad = ({ onButtonDown, onButtonUp, onJoystickMove }: useGame
           onJoystickMove(index, value)
         })
     }
-  }, [onButtonDown, onButtonUp, onJoystickMove])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onButtonDown, onButtonUp, onJoystickMove, ...deps])
 
   return
 }
