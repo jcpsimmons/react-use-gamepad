@@ -1,6 +1,6 @@
 {
   "name": "react-use-gamepad",
-  "version": "0.3.6",
+  "version": "0.4.7",
   "description": "Event driven functionality for the GamepadAPI",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
